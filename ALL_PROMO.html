@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+  <meta charset="UTF-8">
+  <title>Student Grades Viewer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    .summary-container {
+  background-color: white;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 2rem;
+}
+
+.summary-title {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--secondary);
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.summary-item {
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.summary-module {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.summary-count {
+  font-weight: 500;
+  color: var(--dark);
+}
+    
+.average-above-10-row td:first-child {
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 100 !important;
+  size: 2px !important;
+  font-size: small !important;
+}
+ 
+      .navigation-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+      gap: 1rem;
+    }
+    /* Add this to your CSS */
+.average-above-10-row td:first-child,
+.average-row td:first-child {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 100; /* or 200 for slightly thicker */
+  letter-spacing: 0.5px;
+}
+    
+    .nav-button {
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--box-shadow);
+      font-family: 'Montserrat', sans-serif;
+      text-decoration: none;
+      text-align: center;
+    }
+    
+    .nav-button:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+    }
+    
+    .nav-button.active {
+      background-color: var(--accent);
+      font-weight: 600;
+    }
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #4cc9f0;
+      --warning: #f8961e;
+      --danger: #ef233c;
+      --border-radius: 12px;
+      --box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      padding: 2rem;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: var(--secondary);
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+
+    .search-container {
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      max-width: 500px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: var(--border-radius);
+      background-color: white;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      border: 2px solid transparent;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    input[type="text"]::placeholder {
+      color: #adb5bd;
+    }
+
+    .button-container {
+      text-align: center;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    .sort-label {
+      display: block;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--secondary);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    button {
+      margin: 0.5rem;
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      font-family: 'Montserrat', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    button.avg-button {
+      background: var(--accent) !important;
+    }
+
+    button:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 2rem;
+      background-color: white;
+      box-shadow: var(--box-shadow);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    th {
+      background-color: var(--primary);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    td.sorted-rank {
+      font-weight: bold;
+      color: var(--danger);
+      background-color: rgba(239, 35, 60, 0.1);
+    }
+
+    td.highlight-column {
+      background-color: rgba(76, 201, 240, 0.1) !important;
+      font-weight: 600;
+    }
+
+    td.highest-score {
+      background-color: rgba(239, 35, 60, 0.1) !important;
+      color: var(--danger);
+      font-weight: bold;
+      position: relative;
+    }
+
+    td.highest-score::after {
+      content: '★';
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--danger);
+      font-size: 0.8rem;
+    }
+
+    .average-row td {
+      background-color: #f1f8ff;
+      font-weight: bold;
+      border-bottom: 2px solid var(--primary);
+      color: var(--secondary);
+      font-size: 1.05rem;
+    }
+
+    .average-above-10-row td {
+      background-color: #e6f7e6;
+      font-weight: bold;
+      border-bottom: 2px solid #4CAF50;
+      color: #2E7D32;
+      font-size: 1.05rem;
+    }
+
+    .average-row td:first-child,
+    .average-above-10-row td:first-child {
+      background-color: var(--primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    .average-above-10-row td:first-child {
+      background-color: #4CAF50;
+    }
+
+    .no-results {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #6c757d;
+      margin-top: 2rem;
+      font-weight: 500;
+      padding: 2rem;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      h2 {
+        font-size: 1.8rem;
+      }
+      
+      .button-container {
+        padding: 1rem;
+      }
+      
+      button {
+        margin: 0.3rem;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+      }
+      
+      th, td {
+        padding: 10px 5px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+     
+    <div class="navigation-container">
+      <a href="SORT_S1.html" class="nav-button">ISIL</a>
+      <a href="SORT_S2.html" class="nav-button">SI</a>
+      <a href="deliberation_Global.html" class="nav-button active">ALL PROMO</a>
+    </div>
+    <h2>📊 Tableau des notes des élèves</h2>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="🔍 Search student name..." oninput="handleSearch()" />
+    </div>
+    <div class="button-container" id="controls">
+      <span class="sort-label">Trier par module</span>
+    </div>
+    <table id="dataTable"></table>
+    <div id="noResults" class="no-results" style="display: none;">
+      <p>No matching students found</p>
+      <p style="font-size: 3rem;">😕</p>
+    </div>
+  </div>
+
+  <script>
+    function createModuleSummary(data) {
+  const summaryContainer = document.createElement('div');
+  summaryContainer.className = 'summary-container';
+  
+  const title = document.createElement('div');
+  title.className = 'summary-title';
+  title.textContent = 'Étudiants avec moyenne >= 10 par Module';
+  summaryContainer.appendChild(title);
+  
+  const grid = document.createElement('div');
+  grid.className = 'summary-grid';
+  
+  // Get all module names (exclude Name and AVG_S2)
+  const modules = headers.filter(h => h !== 'Name' && h !== 'AVG_S2');
+  
+  modules.forEach(module => {
+    const count = data.filter(student => student[module] >= 10).length;
+    
+    const item = document.createElement('div');
+    item.className = 'summary-item';
+    
+    const moduleName = document.createElement('div');
+    moduleName.className = 'summary-module';
+    moduleName.textContent = module;
+    
+    const moduleCount = document.createElement('div');
+    moduleCount.className = 'summary-count';
+    moduleCount.textContent = `${count} students`;
+    
+    item.appendChild(moduleName);
+    item.appendChild(moduleCount);
+    grid.appendChild(item);
+  });
+  
+  // Add AVG_S2 count
+  const avgItem = document.createElement('div');
+  avgItem.className = 'summary-item';
+  
+  const avgName = document.createElement('div');
+  avgName.className = 'summary-module';
+  avgName.textContent = 'AVG_S2';
+  
+  const avgCount = document.createElement('div');
+  avgCount.className = 'summary-count';
+  avgCount.textContent = `${data.filter(student => student.AVG_S2 >= 10).length} students`;
+  
+  avgItem.appendChild(avgName);
+  avgItem.appendChild(avgCount);
+  grid.appendChild(avgItem);
+  
+  summaryContainer.appendChild(grid);
+  return summaryContainer;
+}
+    const studentData = [
+ {
+   "Name": "1 -  ABDELHAFID  OMAYMA",
+   "Moyenne": 12.19
+ },
+ {
+   "Name": "2 -  ACHOURI  ABDESSAMED",
+   "Moyenne": 10.14
+ },
+ {
+   "Name": "3 -  ADJIMI  AHMED YACINE",
+   "Moyenne": 10.13
+ },
+ {
+   "Name": "4 -  AIDI  Samra",
+   "Moyenne": 10.67
+ },
+ {
+   "Name": "5 -  AMARA  ABLA",
+   "Moyenne": 4.55
+ },
+ {
+   "Name": "6 -  AMMOUR  MERIEM",
+   "Moyenne": 7.37
+ },
+ {
+   "Name": "7 -  AOUINA  GHOUFRAN\nZOUBIDA",
+   "Moyenne": 10.64
+ },
+ {
+   "Name": "8 -  AOUINA  IBTISSAM",
+   "Moyenne": 10.65
+ },
+ {
+   "Name": "9 -  ATAMNIA  KHOULOUD",
+   "Moyenne": 12.08
+ },
+ {
+   "Name": "10 -  ATTOUI  ABIR",
+   "Moyenne": 10.83
+ },
+ {
+   "Name": "11 -  BAKRI  MOHAMMED EL\nBACHIR",
+   "Moyenne": 11.23
+ },
+ {
+   "Name": "12 -  BARKATI  AYA",
+   "Moyenne": 8.62
+ },
+ {
+   "Name": "13 -  BELAADA  MOHAMMED\nELAMIN",
+   "Moyenne": 10.24
+ },
+ {
+   "Name": "14 -  BELBEY  NASSIM AMINE",
+   "Moyenne": 11.64
+ },
+ {
+   "Name": "15 -  BELOUADAH  AYA",
+   "Moyenne": 8.48
+ },
+ {
+   "Name": "16 -  BEN AMARA  FATIMA\nZOHRA",
+   "Moyenne": 12.28
+ },
+ {
+   "Name": "17 -  BEN CHIKH  NOR EL HOUDA",
+   "Moyenne": 11.12
+ },
+ {
+   "Name": "18 -  BEN SEID  Khaoula",
+   "Moyenne": 11.47
+ },
+ {
+   "Name": "19 -  BENABDERRAHMANE  Saleh\nayoub",
+   "Moyenne": 12.24
+ },
+ {
+   "Name": "20 -  BENACHOUR  SALIMA",
+   "Moyenne": 9.57
+ },
+ {
+   "Name": "21 -  BENAISSI  MAHAMMED SAID",
+   "Moyenne": 11.21
+ },
+ {
+   "Name": "22 -  BENBOUDINA  TARIK",
+   "Moyenne": 9.36
+ },
+ {
+   "Name": "23 -  BENGASMIA  ANES",
+   "Moyenne": 10.69
+ },
+ {
+   "Name": "24 -  BENGUESMIA  LOUBNA",
+   "Moyenne": 11.46
+ },
+ {
+   "Name": "25 -  BENKOUIDER  Mahmoud",
+   "Moyenne": 10.22
+ },
+ {
+   "Name": "26 -  BENLATRECHE  Mariya",
+   "Moyenne": 10.86
+ },
+ {
+   "Name": "27 -  BENSLIMANE  INASSE",
+   "Moyenne": 8.63
+ },
+ {
+   "Name": "28 -  BENTOUMI  Aden aicha",
+   "Moyenne": 14.53
+ },
+ {
+   "Name": "29 -  BENYETTOU  RAYANE",
+   "Moyenne": 9.22
+ },
+ {
+   "Name": "30 -  BENZAHIA  SELSABIL",
+   "Moyenne": 11.71
+ },
+ {
+   "Name": "31 -  BOUAICHA  NOR ELYAKIN",
+   "Moyenne": 10.29
+ },
+ {
+   "Name": "32 -  BOUALI  ANOUAR BOUCHRA",
+   "Moyenne": 9.83
+ },
+ {
+   "Name": "33 -  BOUBAKRI  AYA",
+   "Moyenne": 0.26
+ },
+ {
+   "Name": "34 -  BOUBAKRI  HAFIDA",
+   "Moyenne": 11.44
+ },
+ {
+   "Name": "35 -  BOUCHAREB  Salima",
+   "Moyenne": 11.44
+ },
+ {
+   "Name": "36 -  BOUDJELLAL  CHEYMA",
+   "Moyenne": 13.05
+ },
+ {
+   "Name": "37 -  BOUDJOUDI  Maria ines",
+   "Moyenne": 9.28
+ },
+ {
+   "Name": "38 -  BOUGUERRA  HANA",
+   "Moyenne": 10.66
+ },
+ {
+   "Name": "39 -  BOUKHEDIR  ASMA",
+   "Moyenne": 10.15
+ },
+ {
+   "Name": "40 -  BOUKHENISSA  YASSINE",
+   "Moyenne": 8.95
+ },
+ {
+   "Name": "41 -  BOUSBA  ILYAS AYOUB",
+   "Moyenne": 11.32
+ },
+ {
+   "Name": "42 -  BOUSLAH  YOUSRA",
+   "Moyenne": 12.79
+ },
+ {
+   "Name": "43 -  CHEBABHI  SAID ELMOATAZ",
+   "Moyenne": 10.27
+ },
+ {
+   "Name": "44 -  CHEBILI  NADJOUA",
+   "Moyenne": 12.67
+ },
+ {
+   "Name": "45 -  CHELALI  WALID",
+   "Moyenne": 5.64
+ },
+ {
+   "Name": "46 -  CHENEN  ASMA",
+   "Moyenne": 11.99
+ },
+ {
+   "Name": "47 -  CHERFAOUI  FAROUK",
+   "Moyenne": 11.17
+ },
+ {
+   "Name": "48 -  CHIKOUCHE  KHAWLA",
+   "Moyenne": 8.16
+ },
+ {
+   "Name": "49 -  CHOUIH  YASSINE",
+   "Moyenne": 10.04
+ },
+ {
+   "Name": "50 -  DARAF  ABDENNACER",
+   "Moyenne": 13.24
+ },
+ {
+   "Name": "51 -  DEBAB  RANDA",
+   "Moyenne": 11.6
+ },
+ {
+   "Name": "52 -  DERBANE  ABDELLAH",
+   "Moyenne": 11.08
+ },
+ {
+   "Name": "53 -  DILMI  FIRDAWS",
+   "Moyenne": 11.89
+ },
+ {
+   "Name": "54 -  DJAIDJA  DOUAA",
+   "Moyenne": 11.39
+ },
+ {
+   "Name": "55 -  DJAIDJA  ISLAM",
+   "Moyenne": 9.94
+ },
+ {
+   "Name": "56 -  DJALAB  MESSAOUD",
+   "Moyenne": 10.15
+ },
+ {
+   "Name": "57 -  DJALAB  MOHAMED FOUAD",
+   "Moyenne": 9.27
+ },
+ {
+   "Name": "58 -  DJEGHDALI  AYA MANAR",
+   "Moyenne": 12.99
+ },
+ {
+   "Name": "59 -  DOUDOU   MOHAMMED EL\nAMIN",
+   "Moyenne": 10.26
+ },
+ {
+   "Name": "60 -  GHERABI  AHMED SAMEH",
+   "Moyenne": 11.93
+ },
+ {
+   "Name": "61 -  GUELMINE  Sarra",
+   "Moyenne": 10.29
+ },
+ {
+   "Name": "62 -  GUENDOUZ  ZIYAD",
+   "Moyenne": 10.18
+ },
+ {
+   "Name": "63 -  GUETTAI  Aya",
+   "Moyenne": 12.95
+ },
+ {
+   "Name": "64 -  HACHADI  DJAMILA NAIMA",
+   "Moyenne": 12.49
+ },
+ {
+   "Name": "65 -  HACHEMI  FATMA ZOHRA",
+   "Moyenne": 8.41
+ },
+ {
+   "Name": "66 -  HACHI  Saliha ryna",
+   "Moyenne": 7.06
+ },
+ {
+   "Name": "67 -  HALIB  YASSAMINE",
+   "Moyenne": 12.09
+ },
+ {
+   "Name": "68 -  HALLAB  YAAQOUB",
+   "Moyenne": 7.14
+ },
+ {
+   "Name": "69 -  HAMDANI  RANIA",
+   "Moyenne": 9.59
+ },
+ {
+   "Name": "70 -  HAMDINI  AROUA",
+   "Moyenne": 9.98
+ },
+ {
+   "Name": "71 -  HAMOUD  CHOAIB",
+   "Moyenne": 13.84
+ },
+ {
+   "Name": "72 -  HAMOUDI  IKRAM",
+   "Moyenne": 9.65
+ },
+ {
+   "Name": "73 -  HANAFI  IKRAM",
+   "Moyenne": 10.52
+ },
+ {
+   "Name": "74 -  HAROUZ  DINA",
+   "Moyenne": 11.56
+ },
+ {
+   "Name": "75 -  HENNI  ZINEB",
+   "Moyenne": 10
+ },
+ {
+   "Name": "76 -  HERAIZ  IMADEDDINE",
+   "Moyenne": 8.08
+ },
+ {
+   "Name": "77 -  HERZI  AYA",
+   "Moyenne": 7.4
+ },
+ {
+   "Name": "78 -  KABOUYA  ELMAHDI",
+   "Moyenne": 10.76
+ },
+ {
+   "Name": "79 -  KARA  IKRAM RIHEM",
+   "Moyenne": 11.7
+ },
+ {
+   "Name": "80 -  KASMI  HADIL",
+   "Moyenne": 11.19
+ },
+ {
+   "Name": "81 -  KOUIDRI  Hadjir",
+   "Moyenne": 8.82
+ },
+ {
+   "Name": "82 -  LACEFAR  SABA",
+   "Moyenne": 9.75
+ },
+ {
+   "Name": "83 -  LADJAL  SAFIA",
+   "Moyenne": 12
+ },
+ {
+   "Name": "84 -  LAOUEDJ  IBRAHIM\nELKHALIL",
+   "Moyenne": 10.91
+ },
+ {
+   "Name": "85 -  LASSELAT  SOUNDOUS",
+   "Moyenne": 10.24
+ },
+ {
+   "Name": "86 -  LEGHOUIL  DOUHA",
+   "Moyenne": 7.75
+ },
+ {
+   "Name": "87 -  LOGRADA  BACHRA",
+   "Moyenne": 10.05
+ },
+ {
+   "Name": "88 -  LOUKRIZ  ABDERRAOUF",
+   "Moyenne": 12.47
+ },
+ {
+   "Name": "89 -  MAAMRI  LEILA",
+   "Moyenne": 13.03
+ },
+ {
+   "Name": "90 -  MAHAMDI  ABIR",
+   "Moyenne": 7.58
+ },
+ {
+   "Name": "91 -  MAHROUG  FAHD\nMOHAMMED",
+   "Moyenne": 11.84
+ },
+ {
+   "Name": "92 -  MAROUF  YOUNES",
+   "Moyenne": 9.55
+ },
+ {
+   "Name": "93 -  MEBARKI  RADOUANE",
+   "Moyenne": 8.18
+ },
+ {
+   "Name": "94 -  MEKKI  AMIRA",
+   "Moyenne": 10.24
+ },
+ {
+   "Name": "95 -  MELIANI  DALAL",
+   "Moyenne": 11.52
+ },
+ {
+   "Name": "96 -  MELIANI  TAHA EL AMIN",
+   "Moyenne": 11.22
+ },
+ {
+   "Name": "97 -  MERADA  AZAD",
+   "Moyenne": 9.98
+ },
+ {
+   "Name": "98 -  MIAADI  SALOUA",
+   "Moyenne": 13.46
+ },
+ {
+   "Name": "99 -  MIZI  AMIRA",
+   "Moyenne": 10.52
+ },
+ {
+   "Name": "100 -  MOUSSA  KAWTHER",
+   "Moyenne": 10.88
+ },
+ {
+   "Name": "101 -  NECIR  MERIEM",
+   "Moyenne": 11.56
+ },
+ {
+   "Name": "102 -  NIA  IMANE",
+   "Moyenne": 10.96
+ },
+ {
+   "Name": "103 -  OMRI  ABDERRAHMEN",
+   "Moyenne": 9.46
+ },
+ {
+   "Name": "104 -  OUGHNIA  MANAR",
+   "Moyenne": 12.71
+ },
+ {
+   "Name": "105 -  RAHMANI  NABIL",
+   "Moyenne": 9.43
+ },
+ {
+   "Name": "106 -  SAADI  CHEKER ALLAH",
+   "Moyenne": 10.72
+ },
+ {
+   "Name": "107 -  SAHRAOUI  NASREDDINE",
+   "Moyenne": 11.77
+ },
+ {
+   "Name": "108 -  SAIDI  ZOUBEYDA",
+   "Moyenne": 9.88
+ },
+ {
+   "Name": "109 -  SAOUDI  KHAWLA",
+   "Moyenne": 9.85
+ },
+ {
+   "Name": "110 -  SAOUDI  THEBAT",
+   "Moyenne": 10.84
+ },
+ {
+   "Name": "111 -  SAYHI  ZINEB",
+   "Moyenne": 10.06
+ },
+ {
+   "Name": "112 -  SEGHIOUR  LINA MARIYA",
+   "Moyenne": 13.24
+ },
+ {
+   "Name": "113 -  SENINA  SOUHA",
+   "Moyenne": 12.42
+ },
+ {
+   "Name": "114 -  TALBI  IKRAM",
+   "Moyenne": 10.54
+ },
+ {
+   "Name": "115 -  THAMRI  MAYADA",
+   "Moyenne": 11.67
+ },
+ {
+   "Name": "116 -  THARAFI  SOHAIB",
+   "Moyenne": 11.21
+ },
+ {
+   "Name": "117 -  TURQUI  AKRAM",
+   "Moyenne": 8.78
+ },
+ {
+   "Name": "118 -  YALLAOUI  SALAH EDDINE",
+   "Moyenne": 11.04
+ },
+ {
+   "Name": "119 -  ZANAT  CHAHINEZ",
+   "Moyenne": 10.8
+ },
+ {
+   "Name": "120 -  ZELLAGUI  SAFWAN",
+   "Moyenne": 13.25
+ },
+ {
+   "Name": "121 -  ZIANI  RYM",
+   "Moyenne": 12.62
+ },
+ {
+   "Name": "122 -  ZIDELKHIL  HANA",
+   "Moyenne": 10.91
+ },
+ {
+   "Name": "123 -  ZIDELKHIL  YOUSRA",
+   "Moyenne": 12.01
+ },
+ {
+   "Name": "124 -  ZIKEM  RIDHA",
+   "Moyenne": 9
+ },
+ {
+   "Name": "125 -  ZIOUCHE  BOUTHAINA",
+   "Moyenne": 9.66
+ },
+ {
+   "Name": "126 -  ZOUBIRI  CHAHINEZ",
+   "Moyenne": 11.79
+ },
+ {
+   "Name": "1 -  ACHOUR  MANAR",
+   "Moyenne": 9.73
+ },
+ {
+   "Name": "2 -  ACHOURI  NASSIMA",
+   "Moyenne": 12.61
+ },
+ {
+   "Name": "3 -  ADJIMI  Mohamed tayeb",
+   "Moyenne": 8.94
+ },
+ {
+   "Name": "4 -  AISSANI  ASMA",
+   "Moyenne": 9.1
+ },
+ {
+   "Name": "5 -  AMEUR  AKRAM\nABDERRAHIM",
+   "Moyenne": 7.31
+ },
+ {
+   "Name": "6 -  AZZOUZ  AYOUB",
+   "Moyenne": 8.33
+ },
+ {
+   "Name": "7 -  AZZOUZ  El bachir",
+   "Moyenne": 8.17
+ },
+ {
+   "Name": "8 -  BAKHTAOUI  KAMEL",
+   "Moyenne": 7.45
+ },
+ {
+   "Name": "9 -  BAKHTI  Mohammed idris",
+   "Moyenne": 9.56
+ },
+ {
+   "Name": "10 -  BELFAR  DOUAA",
+   "Moyenne": 14.19
+ },
+ {
+   "Name": "11 -  BELLI  FATIMA ZOHRA",
+   "Moyenne": 7.63
+ },
+ {
+   "Name": "12 -  BELOUADAH  AHMED\nAMEUR",
+   "Moyenne": 9.36
+ },
+ {
+   "Name": "13 -  BEN HAMIDOUCHE  MANAR",
+   "Moyenne": 11.77
+ },
+ {
+   "Name": "14 -  BEN SLHOUB  AMINE",
+   "Moyenne": 0.49
+ },
+ {
+   "Name": "15 -  BENAISSOU  MOHAMMED\nIDRIS",
+   "Moyenne": 10.98
+ },
+ {
+   "Name": "16 -  BENDJEDDOU  MOHAMMED\nIMADEDDINE",
+   "Moyenne": 4.18
+ },
+ {
+   "Name": "17 -  BENRABAH  YACINE",
+   "Moyenne": 12.14
+ },
+ {
+   "Name": "18 -  BENTALLAH  Dounya amane",
+   "Moyenne": 10.74
+ },
+ {
+   "Name": "19 -  BENYAHIA  Firdaws amina",
+   "Moyenne": 7.62
+ },
+ {
+   "Name": "20 -  BETKA  LOUBNA",
+   "Moyenne": 11.26
+ },
+ {
+   "Name": "21 -  BLIZAK  AMINA",
+   "Moyenne": 10.02
+ },
+ {
+   "Name": "22 -  BOUCHAREB  ASMA",
+   "Moyenne": 7.51
+ },
+ {
+   "Name": "23 -  BOUDJEMAA  SMAIL LOUAI",
+   "Moyenne": 10.04
+ },
+ {
+   "Name": "24 -  BOUMALIA  SOUHEYL",
+   "Moyenne": 6.26
+ },
+ {
+   "Name": "25 -  BOUNAB  OUAIL",
+   "Moyenne": 9.05
+ },
+ {
+   "Name": "26 -  BOUSBAA  BOUCHRA",
+   "Moyenne": 6.95
+ },
+ {
+   "Name": "27 -  CHENNAFI  HAMADA\nSOUFIANE",
+   "Moyenne": 7
+ },
+ {
+   "Name": "28 -  CHERIFI  AHMED CHARIF",
+   "Moyenne": 9.88
+ },
+ {
+   "Name": "29 -  CHOUITER  Ferhat",
+   "Moyenne": 10.67
+ },
+ {
+   "Name": "30 -  DAHANE  Anes",
+   "Moyenne": 10.21
+ },
+ {
+   "Name": "31 -  DAHMANI  Abir",
+   "Moyenne": 8.92
+ },
+ {
+   "Name": "32 -  DAHMANI  Ferdaous",
+   "Moyenne": 10.53
+ },
+ {
+   "Name": "33 -  DAHMANI  WALA EDDINE",
+   "Moyenne": 6.85
+ },
+ {
+   "Name": "34 -  DJAAFER  Hemza",
+   "Moyenne": 10.11
+ },
+ {
+   "Name": "35 -  DJAIDJA  Abdelmouhimen omar",
+   "Moyenne": 4.37
+ },
+ {
+   "Name": "36 -  DJAIDJA  MAHA",
+   "Moyenne": 9.13
+ },
+ {
+   "Name": "37 -  DJAIDJA  Sarra",
+   "Moyenne": 10.02
+ },
+ {
+   "Name": "38 -  DJAIDJA  Wail",
+   "Moyenne": 2.78
+ },
+ {
+   "Name": "39 -  DJAIDJAA  ADEL",
+   "Moyenne": 0.46
+ },
+ {
+   "Name": "40 -  DJEMIAT  Farouq",
+   "Moyenne": 8.65
+ },
+ {
+   "Name": "41 -  DJOUMAGH  KHADIDJA",
+   "Moyenne": 8.62
+ },
+ {
+   "Name": "42 -  FALI  MOUFIDA",
+   "Moyenne": 11.46
+ },
+ {
+   "Name": "43 -  FERAHTIA  ISLAM",
+   "Moyenne": 0.53
+ },
+ {
+   "Name": "44 -  FERAHTIA  Taqiy eddine",
+   "Moyenne": 14.82
+ },
+ {
+   "Name": "45 -  FERHATI  AZZEDDINE",
+   "Moyenne": 9.11
+ },
+ {
+   "Name": "46 -  GHELLAB  ALA EDDIN\nTAWFIK",
+   "Moyenne": 0.91
+ },
+ {
+   "Name": "47 -  GOUFFI  Nadjah",
+   "Moyenne": 7.32
+ },
+ {
+   "Name": "48 -  GOULAILIZ  HANA",
+   "Moyenne": 12.97
+ },
+ {
+   "Name": "49 -  GUELMINE  FAIZ\nABDESSALAME",
+   "Moyenne": 6.33
+ },
+ {
+   "Name": "50 -  HADBAOUI  MERIEM\nSELSABIL",
+   "Moyenne": 9.52
+ },
+ {
+   "Name": "51 -  HADJI  BADRA",
+   "Moyenne": 10.33
+ },
+ {
+   "Name": "52 -  HADJI  Faical",
+   "Moyenne": 1.68
+ },
+ {
+   "Name": "53 -  HAMDACHE  HALIMA",
+   "Moyenne": 12.32
+ },
+ {
+   "Name": "54 -  HAMDI  Oussama",
+   "Moyenne": 9.29
+ },
+ {
+   "Name": "55 -  HAMMOU  OUSSAMA",
+   "Moyenne": 9.56
+ },
+ {
+   "Name": "56 -  HASNAOUI  SAMAH",
+   "Moyenne": 4.71
+ },
+ {
+   "Name": "57 -  KARKADI  MOHAMED",
+   "Moyenne": 10.48
+ },
+ {
+   "Name": "58 -  KHABAT  Ikram",
+   "Moyenne": 12.55
+ },
+ {
+   "Name": "59 -  KHAOUI  CHEIMA",
+   "Moyenne": 10.14
+ },
+ {
+   "Name": "60 -  KHODJA  SABRINE",
+   "Moyenne": 11.36
+ },
+ {
+   "Name": "61 -  KOUIDRI  MOHAMED",
+   "Moyenne": 7.28
+ },
+ {
+   "Name": "62 -  KRIM  Djamel",
+   "Moyenne": 1.73
+ },
+ {
+   "Name": "63 -  LAHOUAOU  En nassir ahmed\nadib",
+   "Moyenne": 11.11
+ },
+ {
+   "Name": "64 -  LALDJI  MOHAMED BACHIR",
+   "Moyenne": 13.12
+ },
+ {
+   "Name": "65 -  LATRECHE  AZZEDDINE",
+   "Moyenne": 8.53
+ },
+ {
+   "Name": "66 -  LORABI  HIBA AYATALLAH",
+   "Moyenne": 7.29
+ },
+ {
+   "Name": "67 -  LOUKRIZ  FATIMA",
+   "Moyenne": 8.56
+ },
+ {
+   "Name": "68 -  LOUKRIZ  OM EL KHAIR",
+   "Moyenne": 9.13
+ },
+ {
+   "Name": "69 -  MADJADI  AMIRA",
+   "Moyenne": 7.83
+ },
+ {
+   "Name": "70 -  MAHDADI  SAMIA",
+   "Moyenne": 12.58
+ },
+ {
+   "Name": "71 -  MAHDI  ABDERRAZAK",
+   "Moyenne": 9.44
+ },
+ {
+   "Name": "72 -  MAHDI  IMANE",
+   "Moyenne": 7.99
+ },
+ {
+   "Name": "73 -  MANSOURI  SALIM",
+   "Moyenne": 0.49
+ },
+ {
+   "Name": "74 -  MAZARI  ELHADJ AMIN",
+   "Moyenne": 8.86
+ },
+ {
+   "Name": "75 -  MEKIDECHE\nABDERRAHMEN",
+   "Moyenne": 9.84
+ },
+ {
+   "Name": "76 -  MEKIDECHE  Nedjla",
+   "Moyenne": 11.41
+ },
+ {
+   "Name": "77 -  MENAA  SARRA",
+   "Moyenne": 9.6
+ },
+ {
+   "Name": "78 -  MESSAOUDI  AMIRA",
+   "Moyenne": 12.59
+ },
+ {
+   "Name": "79 -  MESSEGUEM  SOHEYB",
+   "Moyenne": 4.16
+ },
+ {
+   "Name": "80 -  MEZAACHE  MOHAMMED\nESSAID ELHACHEMI",
+   "Moyenne": 10.62
+ },
+ {
+   "Name": "81 -  MEZRAG  MOUSSA",
+   "Moyenne": 12.36
+ },
+ {
+   "Name": "82 -  MOSTAFAOUI  DOUAA\nELBATOUL",
+   "Moyenne": 5.83
+ },
+ {
+   "Name": "83 -  NASRI  ABDELBAQI",
+   "Moyenne": 11.94
+ },
+ {
+   "Name": "84 -  NASRI  AMIN",
+   "Moyenne": 4.39
+ },
+ {
+   "Name": "85 -  OULD TOUMI  AHMED",
+   "Moyenne": 14.22
+ },
+ {
+   "Name": "86 -  REDAOUI  MALAK",
+   "Moyenne": 12.28
+ },
+ {
+   "Name": "87 -  REZIGAT  Zakarya",
+   "Moyenne": 13.07
+ },
+ {
+   "Name": "88 -  SAILAA  MOHAMMED\nRADHWEN",
+   "Moyenne": 11.11
+ },
+ {
+   "Name": "89 -  SEBAA  YACINE",
+   "Moyenne": 7.16
+ },
+ {
+   "Name": "90 -  SERRAI  DOUNYA",
+   "Moyenne": 8.28
+ },
+ {
+   "Name": "91 -  TAHMI  SEYF EDDINE",
+   "Moyenne": 8.56
+ },
+ {
+   "Name": "92 -  TEBANI  RANIA",
+   "Moyenne": 8.89
+ },
+ {
+   "Name": "93 -  TITRAOUI  ABDERRAOUF",
+   "Moyenne": 9.46
+ },
+ {
+   "Name": "94 -  TOUNSI  KHAWLA",
+   "Moyenne": 9.23
+ },
+ {
+   "Name": "95 -  YAHIAOUI  SAFIA",
+   "Moyenne": 10.17
+ },
+ {
+   "Name": "96 -  ZEMIH  BRAHIM",
+   "Moyenne": 10.06
+ },
+ {
+   "Name": "97 -  ZIANE  Aya",
+   "Moyenne": 7.52
+ },
+ {
+   "Name": "98 -  ZIAZIA  Wail mounib",
+   "Moyenne": 11.58
+ }
+]
+    ;
+  
+   
+    let currentSort = null;
+    let originalData = [...studentData];
+    let filteredData = [...studentData];
+    const headers = Object.keys(studentData[0]);
+
+    function createButtons() {
+      const controls = document.getElementById("controls");
+      headers.slice(1).forEach(header => {
+        const btn = document.createElement("button");
+        btn.textContent = header;
+        btn.dataset.sorted = "false";
+        btn.onclick = () => toggleSort(header, btn);
+        if (header === "AVG") btn.classList.add("avg-button");
+        controls.appendChild(btn);
+      });
+    }
+
+    function toggleSort(column, btn) {
+      if (currentSort === column && btn.dataset.sorted === "true") {
+        btn.dataset.sorted = "false";
+        currentSort = null;
+        displayTable(filteredData);
+      } else {
+        document.querySelectorAll("button").forEach(b => b.dataset.sorted = "false");
+        btn.dataset.sorted = "true";
+        currentSort = column;
+        const sorted = [...filteredData].sort((a, b) => b[column] - a[column]);
+        displayTable(sorted, column);
+      }
+    }
+
+    function displayTable(data, sortedColumn = null) {
+      const table = document.getElementById("dataTable");
+      const noResultsDiv = document.getElementById("noResults");
+      table.innerHTML = "";
+      const container = document.querySelector('.container');
+  const existingSummary = document.querySelector('.summary-container');
+  if (existingSummary) existingSummary.remove();
+  
+  container.insertBefore(createModuleSummary(data), table);
+
+      if (data.length === 0) {
+        noResultsDiv.style.display = "block";
+        return;
+      } else {
+        noResultsDiv.style.display = "none";
+      }
+
+      // Create table header
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+      headerRow.appendChild(document.createElement("th"));
+      headers.forEach(header => {
+        const th = document.createElement("th");
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+
+      // Calculate averages for students with AVG > 10
+      const above10Students = data.filter(student => student.AVG >= 10);
+      if (above10Students.length > 0) {
+        const above10AvgRow = document.createElement("tr");
+        above10AvgRow.className = "average-above-10-row";
+        const above10Label = document.createElement("td");
+        above10Label.textContent = `AVG of students that have S1+S2 >= 10 `;
+        above10Label.classList.add('thin-font');
+
+        above10AvgRow.appendChild(above10Label);
+
+        headers.forEach(header => {
+          const td = document.createElement("td");
+          if (header === "Name") {
+            td.textContent = "";
+          } else {
+            const values = above10Students.map(d => d[header]);
+            const average = (values.reduce((acc, val) => acc + val, 0) / values.length).toFixed(2);
+            td.textContent = average;
+          }
+          above10AvgRow.appendChild(td);
+        });
+        tbody.appendChild(above10AvgRow);
+      }
+
+      // Calculate overall averages
+      const averageRow = document.createElement("tr");
+      averageRow.className = "average-row";
+      const avgLabel = document.createElement("td");
+      avgLabel.textContent = `Total moyen de chaque module`;
+      
+
+      averageRow.appendChild(avgLabel);
+
+      headers.forEach(header => {
+        const td = document.createElement("td");
+        if (header === "Name") {
+          td.textContent = "";
+        } else {
+          const values = data.map(d => d[header]);
+          const average = (values.reduce((acc, val) => acc + val, 0) / values.length).toFixed(2);
+          td.textContent = average;
+        }
+        averageRow.appendChild(td);
+      });
+      tbody.appendChild(averageRow);
+
+      // Add student data rows
+      let maxValue = sortedColumn ? Math.max(...data.map(d => d[sortedColumn])) : null;
+
+      data.forEach((row, index) => {
+        const tr = document.createElement("tr");
+        const rankTd = document.createElement("td");
+        rankTd.textContent = sortedColumn ? index + 1 : "-";
+        rankTd.className = sortedColumn ? "sorted-rank" : "";
+        tr.appendChild(rankTd);
+
+        headers.forEach(header => {
+          const td = document.createElement("td");
+          td.textContent = row[header];
+          if (sortedColumn && header === sortedColumn) {
+            td.classList.add("highlight-column");
+            if (row[header] === maxValue) {
+              td.classList.add("highest-score");
+            }
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+    }
+
+    function handleSearch() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      filteredData = originalData.filter(student => 
+        student.Name.toLowerCase().includes(input)
+      );
+      displayTable(filteredData);
+    }
+
+    createButtons();
+    displayTable(studentData);
+  </script>
+</body>
+</html>

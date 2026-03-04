@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Name Grades Viewer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .summary-container {
+  background-color: white;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 2rem;
+}
+
+.summary-title {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--secondary);
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.summary-item {
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.summary-module {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.summary-count {
+  font-weight: 500;
+  color: var(--dark);
+}
+       .navigation-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+      gap: 1rem;
+    }
+    
+    .nav-button {
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--box-shadow);
+      font-family: 'Montserrat', sans-serif;
+      text-decoration: none;
+      text-align: center;
+    }
+    
+    .nav-button:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+    }
+    
+    .nav-button.active {
+      background-color: var(--accent);
+      font-weight: 600;
+    }
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #4cc9f0;
+      --warning: #f8961e;
+      --danger: #ef233c;
+      --border-radius: 12px;
+      --box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      padding: 2rem;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: var(--secondary);
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+
+    .search-container {
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      max-width: 500px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: var(--border-radius);
+      background-color: white;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      border: 2px solid transparent;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    input[type="text"]::placeholder {
+      color: #adb5bd;
+    }
+
+    .button-container {
+      text-align: center;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    .sort-label {
+      display: block;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--secondary);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    button {
+      margin: 0.5rem;
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      font-family: 'Montserrat', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    button.avg-button {
+      background: var(--accent) !important;
+    }
+
+    button:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 2rem;
+      background-color: white;
+      box-shadow: var(--box-shadow);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    th {
+      background-color: var(--primary);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    td.sorted-rank {
+      font-weight: bold;
+      color: var(--danger);
+      background-color: rgba(239, 35, 60, 0.1);
+    }
+
+    td.highlight-column {
+      background-color: rgba(76, 201, 240, 0.1) !important;
+      font-weight: 600;
+    }
+
+    td.highest-score {
+      background-color: rgba(239, 35, 60, 0.1) !important;
+      color: var(--danger);
+      font-weight: bold;
+      position: relative;
+    }
+
+    td.highest-score::after {
+      content: '★';
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--danger);
+      font-size: 0.8rem;
+    }
+
+    .average-row td {
+      background-color: #f1f8ff;
+      font-weight: bold;
+      border-bottom: 2px solid var(--primary);
+      color: var(--secondary);
+      font-size: 1.05rem;
+    }
+
+    .average-above-10-row td {
+      background-color: #e6f7e6;
+      font-weight: bold;
+      border-bottom: 2px solid #4CAF50;
+      color: #2E7D32;
+      font-size: 1.05rem;
+    }
+
+    .average-row td:first-child,
+    .average-above-10-row td:first-child {
+      background-color: var(--primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    .average-above-10-row td:first-child {
+      background-color: #4CAF50;
+    }
+
+    .no-results {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #6c757d;
+      margin-top: 2rem;
+      font-weight: 500;
+      padding: 2rem;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      h2 {
+        font-size: 1.8rem;
+      }
+      
+      .button-container {
+        padding: 1rem;
+      }
+      
+      button {
+        margin: 0.3rem;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+      }
+      
+      th, td {
+        padding: 10px 5px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+    <div class="container">
+    
+    <div class="navigation-container">
+      <a href="SORT_S1.html" class="nav-button active">ISIL</a>
+      <a href="SORT_S2.html" class="nav-button">SI</a>
+      <a href="deliberation_Global.html" class="nav-button">ALL PROMO</a>
+    </div>
+  
+    <h2>📊Tableau des notes des élèves</h2>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="🔍 Search Name name..." oninput="handleSearch()" />
+    </div>
+    <div class="button-container" id="controls">
+      <span class="sort-label">Trier par module</span>
+    </div>
+    <table id="dataTable"></table>
+    <div id="noResults" class="no-results" style="display: none;">
+      <p>No matching Names found</p>
+      <p style="font-size: 3rem;">😕</p>
+    </div>
+  </div>
+
+  <script>
+    const NameData = [
+
+ {
+   "Name": "1 -  ABDELHAFID  OMAYMA",
+   "Sid": 8.6,
+   "Sad": 14,
+   "GL": 13.7,
+   "ihm": 13.55,
+   "admi": 15,
+   "progWeb": 10,
+   "ENVS": 13,
+   "Moyenne": 12.19
+ },
+ {
+   "Name": "2 -  ACHOURI  ABDESSAMED",
+   "Sid": 12.45,
+   "Sad": 9.7,
+   "GL": 11.3,
+   "ihm": 10,
+   "admi": 5.3,
+   "progWeb": 6.2,
+   "ENVS": 15,
+   "Moyenne": 10.14
+ },
+ {
+   "Name": "3 -  ADJIMI  AHMED YACINE",
+   "Sid": 9.45,
+   "Sad": 6.6,
+   "GL": 13.25,
+   "ihm": 11.8,
+   "admi": 9.45,
+   "progWeb": 7.3,
+   "ENVS": 11,
+   "Moyenne": 10.13
+ },
+ {
+   "Name": "4 -  AIDI  Samra",
+   "Sid": 10.24,
+   "Sad": 13.9,
+   "GL": 13.95,
+   "ihm": 4.35,
+   "admi": 7.2,
+   "progWeb": 7.4,
+   "ENVS": 19,
+   "Moyenne": 10.67
+ },
+ {
+   "Name": "5 -  AMARA  ABLA",
+   "Sid": 5.15,
+   "Sad": 8.3,
+   "GL": 5.55,
+   "ihm": 6.6,
+   "admi": 0,
+   "progWeb": 2.4,
+   "ENVS": 0,
+   "Moyenne": 4.55
+ },
+ {
+   "Name": "6 -  AMMOUR  MERIEM",
+   "Sid": 6.15,
+   "Sad": 9.5,
+   "GL": 7.2,
+   "ihm": 10.4,
+   "admi": 6,
+   "progWeb": 5,
+   "ENVS": 10,
+   "Moyenne": 7.37
+ },
+ {
+   "Name": "7 -  AOUINA  GHOUFRAN\nZOUBIDA",
+   "Sid": 10.75,
+   "Sad": 9.4,
+   "GL": 12.4,
+   "ihm": 13,
+   "admi": 10.7,
+   "progWeb": 6,
+   "ENVS": 10,
+   "Moyenne": 10.64
+ },
+ {
+   "Name": "8 -  AOUINA  IBTISSAM",
+   "Sid": 11.55,
+   "Sad": 11.8,
+   "GL": 12.05,
+   "ihm": 11.9,
+   "admi": 5.8,
+   "progWeb": 7.8,
+   "ENVS": 12,
+   "Moyenne": 10.65
+ },
+ {
+   "Name": "9 -  ATAMNIA  KHOULOUD",
+   "Sid": 10.65,
+   "Sad": 9.3,
+   "GL": 14.25,
+   "ihm": 13.25,
+   "admi": 12.1,
+   "progWeb": 8.2,
+   "ENVS": 20,
+   "Moyenne": 12.08
+ },
+ {
+   "Name": "10 -  ATTOUI  ABIR",
+   "Sid": 7.55,
+   "Sad": 8.2,
+   "GL": 13.65,
+   "ihm": 14.85,
+   "admi": 10.65,
+   "progWeb": 7.4,
+   "ENVS": 17,
+   "Moyenne": 10.83
+ },
+ {
+   "Name": "11 -  BAKRI  MOHAMMED EL\nBACHIR",
+   "Sid": 10.6,
+   "Sad": 9.8,
+   "GL": 11.5,
+   "ihm": 12.75,
+   "admi": 10.7,
+   "progWeb": 10,
+   "ENVS": 16,
+   "Moyenne": 11.23
+ },
+ {
+   "Name": "12 -  BARKATI  AYA",
+   "Sid": 7.2,
+   "Sad": 8.1,
+   "GL": 11.55,
+   "ihm": 10.15,
+   "admi": 5.65,
+   "progWeb": 6.9,
+   "ENVS": 10,
+   "Moyenne": 8.62
+ },
+ {
+   "Name": "13 -  BELAADA  MOHAMMED\nELAMIN",
+   "Sid": 9.5,
+   "Sad": 8.8,
+   "GL": 10.9,
+   "ihm": 12.1,
+   "admi": 9,
+   "progWeb": 6.8,
+   "ENVS": 19,
+   "Moyenne": 10.24
+ },
+ {
+   "Name": "14 -  BELBEY  NASSIM AMINE",
+   "Sid": 12.9,
+   "Sad": 8.7,
+   "GL": 13.85,
+   "ihm": 13.1,
+   "admi": 9.45,
+   "progWeb": 7.2,
+   "ENVS": 14,
+   "Moyenne": 11.64
+ },
+ {
+   "Name": "15 -  BELOUADAH  AYA",
+   "Sid": 5.6,
+   "Sad": 7.7,
+   "GL": 13.2,
+   "ihm": 6.9,
+   "admi": 9,
+   "progWeb": 4.4,
+   "ENVS": 13,
+   "Moyenne": 8.48
+ },
+ {
+   "Name": "16 -  BEN AMARA  FATIMA\nZOHRA",
+   "Sid": 12.6,
+   "Sad": 10.2,
+   "GL": 14,
+   "ihm": 12.8,
+   "admi": 12.5,
+   "progWeb": 7.2,
+   "ENVS": 17,
+   "Moyenne": 12.28
+ },
+ {
+   "Name": "17 -  BEN CHIKH  NOR EL HOUDA",
+   "Sid": 12.6,
+   "Sad": 8.3,
+   "GL": 13.85,
+   "ihm": 13,
+   "admi": 8.2,
+   "progWeb": 6.6,
+   "ENVS": 11,
+   "Moyenne": 11.12
+ },
+ {
+   "Name": "18 -  BEN SEID  Khaoula",
+   "Sid": 12.65,
+   "Sad": 11.8,
+   "GL": 13.65,
+   "ihm": 13,
+   "admi": 8.8,
+   "progWeb": 6.3,
+   "ENVS": 10,
+   "Moyenne": 11.47
+ },
+ {
+   "Name": "19 -  BENABDERRAHMANE  Saleh\nayoub",
+   "Sid": 11.85,
+   "Sad": 10,
+   "GL": 14.45,
+   "ihm": 15,
+   "admi": 10.8,
+   "progWeb": 8.2,
+   "ENVS": 15,
+   "Moyenne": 12.24
+ },
+ {
+   "Name": "20 -  BENACHOUR  SALIMA",
+   "Sid": 7.1,
+   "Sad": 6.5,
+   "GL": 12.55,
+   "ihm": 11.35,
+   "admi": 9.7,
+   "progWeb": 7,
+   "ENVS": 15,
+   "Moyenne": 9.57
+ },
+ {
+   "Name": "21 -  BENAISSI  MAHAMMED SAID",
+   "Sid": 12.35,
+   "Sad": 8.2,
+   "GL": 12.2,
+   "ihm": 13.5,
+   "admi": 10.1,
+   "progWeb": 6.9,
+   "ENVS": 15,
+   "Moyenne": 11.21
+ },
+ {
+   "Name": "22 -  BENBOUDINA  TARIK",
+   "Sid": 11.4,
+   "Sad": 4.6,
+   "GL": 9.1,
+   "ihm": 12.3,
+   "admi": 9,
+   "progWeb": 4.2,
+   "ENVS": 17,
+   "Moyenne": 9.36
+ },
+ {
+   "Name": "23 -  BENGASMIA  ANES",
+   "Sid": 12.4,
+   "Sad": 6.4,
+   "GL": 13.05,
+   "ihm": 9.6,
+   "admi": 9.4,
+   "progWeb": 8.1,
+   "ENVS": 13,
+   "Moyenne": 10.69
+ },
+ {
+   "Name": "24 -  BENGUESMIA  LOUBNA",
+   "Sid": 13.35,
+   "Sad": 12.1,
+   "GL": 11.9,
+   "ihm": 12.5,
+   "admi": 8.85,
+   "progWeb": 8.5,
+   "ENVS": 10,
+   "Moyenne": 11.46
+ },
+ {
+   "Name": "25 -  BENKOUIDER  Mahmoud",
+   "Sid": 11.54,
+   "Sad": 9.6,
+   "GL": 10,
+   "ihm": 11.7,
+   "admi": 9.1,
+   "progWeb": 6.9,
+   "ENVS": 13,
+   "Moyenne": 10.22
+ },
+ {
+   "Name": "26 -  BENLATRECHE  Mariya",
+   "Sid": 11.5,
+   "Sad": 5.9,
+   "GL": 11,
+   "ihm": 9.9,
+   "admi": 14.05,
+   "progWeb": 7.5,
+   "ENVS": 20,
+   "Moyenne": 10.86
+ },
+ {
+   "Name": "27 -  BENSLIMANE  INASSE",
+   "Sid": 5.65,
+   "Sad": 9.5,
+   "GL": 9.65,
+   "ihm": 11.6,
+   "admi": 9.75,
+   "progWeb": 5.9,
+   "ENVS": 12,
+   "Moyenne": 8.63
+ },
+ {
+   "Name": "28 -  BENTOUMI  Aden aicha",
+   "Sid": 15.6,
+   "Sad": 16.6,
+   "GL": 15,
+   "ihm": 14.35,
+   "admi": 14.2,
+   "progWeb": 11.2,
+   "ENVS": 12,
+   "Moyenne": 14.53
+ },
+ {
+   "Name": "29 -  BENYETTOU  RAYANE",
+   "Sid": 7.65,
+   "Sad": 6.5,
+   "GL": 10.7,
+   "ihm": 12.8,
+   "admi": 7.6,
+   "progWeb": 7.8,
+   "ENVS": 14,
+   "Moyenne": 9.22
+ },
+ {
+   "Name": "30 -  BENZAHIA  SELSABIL",
+   "Sid": 11.3,
+   "Sad": 8.4,
+   "GL": 11.95,
+   "ihm": 15.3,
+   "admi": 13.75,
+   "progWeb": 8.1,
+   "ENVS": 15,
+   "Moyenne": 11.71
+ },
+ {
+   "Name": "31 -  BOUAICHA  NOR ELYAKIN",
+   "Sid": 7.6,
+   "Sad": 10.3,
+   "GL": 13.55,
+   "ihm": 9.5,
+   "admi": 9.55,
+   "progWeb": 7.8,
+   "ENVS": 16,
+   "Moyenne": 10.29
+ },
+ {
+   "Name": "32 -  BOUALI  ANOUAR BOUCHRA",
+   "Sid": 6.3,
+   "Sad": 8.2,
+   "GL": 12.9,
+   "ihm": 12.7,
+   "admi": 8.9,
+   "progWeb": 6.9,
+   "ENVS": 17,
+   "Moyenne": 9.83
+ },
+ {
+   "Name": "33 -  BOUBAKRI  AYA",
+   "Sid": 0,
+   "Sad": 0,
+   "GL": 0,
+   "ihm": 2.2,
+   "admi": 0,
+   "progWeb": 0,
+   "ENVS": 0,
+   "Moyenne": 0.26
+ },
+ {
+   "Name": "34 -  BOUBAKRI  HAFIDA",
+   "Sid": 10.7,
+   "Sad": 9.1,
+   "GL": 13.7,
+   "ihm": 12.4,
+   "admi": 11.3,
+   "progWeb": 7.6,
+   "ENVS": 16,
+   "Moyenne": 11.44
+ },
+ {
+   "Name": "35 -  BOUCHAREB  Salima",
+   "Sid": 11.9,
+   "Sad": 12.1,
+   "GL": 12.25,
+   "ihm": 12.5,
+   "admi": 10.9,
+   "progWeb": 8.4,
+   "ENVS": 10,
+   "Moyenne": 11.44
+ },
+ {
+   "Name": "36 -  BOUDJELLAL  CHEYMA",
+   "Sid": 13.95,
+   "Sad": 16,
+   "GL": 13.6,
+   "ihm": 13.65,
+   "admi": 11.6,
+   "progWeb": 9.1,
+   "ENVS": 11,
+   "Moyenne": 13.05
+ },
+ {
+   "Name": "37 -  BOUDJOUDI  Maria ines",
+   "Sid": 7.05,
+   "Sad": 7.7,
+   "GL": 10.6,
+   "ihm": 14.2,
+   "admi": 9.55,
+   "progWeb": 5.6,
+   "ENVS": 13,
+   "Moyenne": 9.28
+ },
+ {
+   "Name": "38 -  BOUGUERRA  HANA",
+   "Sid": 9.65,
+   "Sad": 10.1,
+   "GL": 13,
+   "ihm": 11.7,
+   "admi": 10.7,
+   "progWeb": 7.8,
+   "ENVS": 10,
+   "Moyenne": 10.66
+ },
+ {
+   "Name": "39 -  BOUKHEDIR  ASMA",
+   "Sid": 5.65,
+   "Sad": 11,
+   "GL": 12.75,
+   "ihm": 11,
+   "admi": 11.2,
+   "progWeb": 8.8,
+   "ENVS": 15,
+   "Moyenne": 10.15
+ },
+ {
+   "Name": "40 -  BOUKHENISSA  YASSINE",
+   "Sid": 8.2,
+   "Sad": 7.1,
+   "GL": 8.7,
+   "ihm": 10.5,
+   "admi": 10.85,
+   "progWeb": 5.8,
+   "ENVS": 16,
+   "Moyenne": 8.95
+ },
+ {
+   "Name": "41 -  BOUSBA  ILYAS AYOUB",
+   "Sid": 13.7,
+   "Sad": 10.3,
+   "GL": 11.55,
+   "ihm": 13.8,
+   "admi": 8,
+   "progWeb": 5.6,
+   "ENVS": 16,
+   "Moyenne": 11.32
+ },
+ {
+   "Name": "42 -  BOUSLAH  YOUSRA",
+   "Sid": 12.75,
+   "Sad": 11.2,
+   "GL": 13.3,
+   "ihm": 15.25,
+   "admi": 12.55,
+   "progWeb": 10.6,
+   "ENVS": 14,
+   "Moyenne": 12.79
+ },
+ {
+   "Name": "43 -  CHEBABHI  SAID ELMOATAZ",
+   "Sid": 9.15,
+   "Sad": 6.9,
+   "GL": 13.35,
+   "ihm": 13.7,
+   "admi": 10.7,
+   "progWeb": 6,
+   "ENVS": 10,
+   "Moyenne": 10.27
+ },
+ {
+   "Name": "44 -  CHEBILI  NADJOUA",
+   "Sid": 16.8,
+   "Sad": 8.5,
+   "GL": 13.35,
+   "ihm": 14.3,
+   "admi": 10.65,
+   "progWeb": 5.9,
+   "ENVS": 16,
+   "Moyenne": 12.67
+ },
+ {
+   "Name": "45 -  CHELALI  WALID",
+   "Sid": 1,
+   "Sad": 3.9,
+   "GL": 10.75,
+   "ihm": 10.6,
+   "admi": 0,
+   "progWeb": 2.4,
+   "ENVS": 15,
+   "Moyenne": 5.64
+ },
+ {
+   "Name": "46 -  CHENEN  ASMA",
+   "Sid": 13.95,
+   "Sad": 8.5,
+   "GL": 12.65,
+   "ihm": 13.8,
+   "admi": 10.5,
+   "progWeb": 8.9,
+   "ENVS": 14,
+   "Moyenne": 11.99
+ },
+ {
+   "Name": "47 -  CHERFAOUI  FAROUK",
+   "Sid": 12.3,
+   "Sad": 7.8,
+   "GL": 12.8,
+   "ihm": 11.9,
+   "admi": 8.45,
+   "progWeb": 10.6,
+   "ENVS": 12,
+   "Moyenne": 11.17
+ },
+ {
+   "Name": "48 -  CHIKOUCHE  KHAWLA",
+   "Sid": 5.3,
+   "Sad": 3.9,
+   "GL": 11.6,
+   "ihm": 13.2,
+   "admi": 7.2,
+   "progWeb": 6.3,
+   "ENVS": 10,
+   "Moyenne": 8.16
+ },
+ {
+   "Name": "49 -  CHOUIH  YASSINE",
+   "Sid": 7.9,
+   "Sad": 8.7,
+   "GL": 13.15,
+   "ihm": 10.8,
+   "admi": 9.95,
+   "progWeb": 8.3,
+   "ENVS": 11,
+   "Moyenne": 10.04
+ },
+ {
+   "Name": "50 -  DARAF  ABDENNACER",
+   "Sid": 16.55,
+   "Sad": 11.2,
+   "GL": 14.5,
+   "ihm": 13.5,
+   "admi": 10.55,
+   "progWeb": 8.2,
+   "ENVS": 14,
+   "Moyenne": 13.24
+ },
+ {
+   "Name": "51 -  DEBAB  RANDA",
+   "Sid": 11.9,
+   "Sad": 7.7,
+   "GL": 13.2,
+   "ihm": 14.75,
+   "admi": 12.35,
+   "progWeb": 6.1,
+   "ENVS": 15,
+   "Moyenne": 11.6
+ },
+ {
+   "Name": "52 -  DERBANE  ABDELLAH",
+   "Sid": 12.25,
+   "Sad": 8.8,
+   "GL": 12.55,
+   "ihm": 12.1,
+   "admi": 9.2,
+   "progWeb": 7.5,
+   "ENVS": 14,
+   "Moyenne": 11.08
+ },
+ {
+   "Name": "53 -  DILMI  FIRDAWS",
+   "Sid": 12.95,
+   "Sad": 10,
+   "GL": 14.8,
+   "ihm": 12.45,
+   "admi": 10,
+   "progWeb": 6.6,
+   "ENVS": 13,
+   "Moyenne": 11.89
+ },
+ {
+   "Name": "54 -  DJAIDJA  DOUAA",
+   "Sid": 13.2,
+   "Sad": 9.3,
+   "GL": 11,
+   "ihm": 11.55,
+   "admi": 8.8,
+   "progWeb": 8.8,
+   "ENVS": 20,
+   "Moyenne": 11.39
+ },
+ {
+   "Name": "55 -  DJAIDJA  ISLAM",
+   "Sid": 9.55,
+   "Sad": 8.3,
+   "GL": 12.05,
+   "ihm": 11.65,
+   "admi": 7.75,
+   "progWeb": 8.6,
+   "ENVS": 10,
+   "Moyenne": 9.94
+ },
+ {
+   "Name": "56 -  DJALAB  MESSAOUD",
+   "Sid": 10.35,
+   "Sad": 8.4,
+   "GL": 12.45,
+   "ihm": 10.1,
+   "admi": 8.5,
+   "progWeb": 8.7,
+   "ENVS": 10,
+   "Moyenne": 10.15
+ },
+ {
+   "Name": "57 -  DJALAB  MOHAMED FOUAD",
+   "Sid": 7.95,
+   "Sad": 10.3,
+   "GL": 9.5,
+   "ihm": 11.4,
+   "admi": 8.3,
+   "progWeb": 5.9,
+   "ENVS": 16,
+   "Moyenne": 9.27
+ },
+ {
+   "Name": "58 -  DJEGHDALI  AYA MANAR",
+   "Sid": 16.2,
+   "Sad": 7.7,
+   "GL": 15.8,
+   "ihm": 16.2,
+   "admi": 8.8,
+   "progWeb": 5.7,
+   "ENVS": 16,
+   "Moyenne": 12.99
+ },
+ {
+   "Name": "59 -  DOUDOU   MOHAMMED EL\nAMIN",
+   "Sid": 10.75,
+   "Sad": 11.1,
+   "GL": 11,
+   "ihm": 12.1,
+   "admi": 6,
+   "progWeb": 7.5,
+   "ENVS": 14,
+   "Moyenne": 10.26
+ },
+ {
+   "Name": "60 -  GHERABI  AHMED SAMEH",
+   "Sid": 11.4,
+   "Sad": 10.2,
+   "GL": 12.5,
+   "ihm": 12.8,
+   "admi": 15,
+   "progWeb": 8.6,
+   "ENVS": 14,
+   "Moyenne": 11.93
+ },
+ {
+   "Name": "61 -  GUELMINE  Sarra",
+   "Sid": 8.28,
+   "Sad": 11.5,
+   "GL": 14.55,
+   "ihm": 8.3,
+   "admi": 8,
+   "progWeb": 6.5,
+   "ENVS": 15,
+   "Moyenne": 10.29
+ },
+ {
+   "Name": "62 -  GUENDOUZ  ZIYAD",
+   "Sid": 9.6,
+   "Sad": 10.2,
+   "GL": 11.8,
+   "ihm": 10.6,
+   "admi": 8.15,
+   "progWeb": 8.3,
+   "ENVS": 13,
+   "Moyenne": 10.18
+ },
+ {
+   "Name": "63 -  GUETTAI  Aya",
+   "Sid": 15.25,
+   "Sad": 11.4,
+   "GL": 14,
+   "ihm": 12.9,
+   "admi": 13,
+   "progWeb": 5.8,
+   "ENVS": 17,
+   "Moyenne": 12.95
+ },
+ {
+   "Name": "64 -  HACHADI  DJAMILA NAIMA",
+   "Sid": 14.85,
+   "Sad": 10.9,
+   "GL": 13.4,
+   "ihm": 15.2,
+   "admi": 11.55,
+   "progWeb": 6.5,
+   "ENVS": 11,
+   "Moyenne": 12.49
+ },
+ {
+   "Name": "65 -  HACHEMI  FATMA ZOHRA",
+   "Sid": 7.05,
+   "Sad": 8.1,
+   "GL": 9.45,
+   "ihm": 11.6,
+   "admi": 6.7,
+   "progWeb": 6.6,
+   "ENVS": 11,
+   "Moyenne": 8.41
+ },
+ {
+   "Name": "66 -  HACHI  Saliha ryna",
+   "Sid": 2.05,
+   "Sad": 4.8,
+   "GL": 11.6,
+   "ihm": 14.4,
+   "admi": 6.3,
+   "progWeb": 1.2,
+   "ENVS": 12,
+   "Moyenne": 7.06
+ },
+ {
+   "Name": "67 -  HALIB  YASSAMINE",
+   "Sid": 13.2,
+   "Sad": 9.1,
+   "GL": 14.6,
+   "ihm": 13.4,
+   "admi": 10.2,
+   "progWeb": 9,
+   "ENVS": 11,
+   "Moyenne": 12.09
+ },
+ {
+   "Name": "68 -  HALLAB  YAAQOUB",
+   "Sid": 9.2,
+   "Sad": 4.8,
+   "GL": 7.1,
+   "ihm": 8.5,
+   "admi": 3.95,
+   "progWeb": 5.8,
+   "ENVS": 10,
+   "Moyenne": 7.14
+ },
+ {
+   "Name": "69 -  HAMDANI  RANIA",
+   "Sid": 9.05,
+   "Sad": 9.2,
+   "GL": 11.8,
+   "ihm": 9.35,
+   "admi": 9.7,
+   "progWeb": 6.6,
+   "ENVS": 10,
+   "Moyenne": 9.59
+ },
+ {
+   "Name": "70 -  HAMDINI  AROUA",
+   "Sid": 8.75,
+   "Sad": 9.4,
+   "GL": 12.95,
+   "ihm": 11.5,
+   "admi": 8.6,
+   "progWeb": 6.4,
+   "ENVS": 11,
+   "Moyenne": 9.98
+ },
+ {
+   "Name": "71 -  HAMOUD  CHOAIB",
+   "Sid": 15.8,
+   "Sad": 8.1,
+   "GL": 14.25,
+   "ihm": 15.2,
+   "admi": 14.6,
+   "progWeb": 10.6,
+   "ENVS": 18,
+   "Moyenne": 13.84
+ },
+ {
+   "Name": "72 -  HAMOUDI  IKRAM",
+   "Sid": 8,
+   "Sad": 6.6,
+   "GL": 13.6,
+   "ihm": 12.6,
+   "admi": 7.5,
+   "progWeb": 6.6,
+   "ENVS": 11,
+   "Moyenne": 9.65
+ },
+ {
+   "Name": "73 -  HANAFI  IKRAM",
+   "Sid": 9.7,
+   "Sad": 4.9,
+   "GL": 14.05,
+   "ihm": 15.5,
+   "admi": 9.1,
+   "progWeb": 6.4,
+   "ENVS": 12,
+   "Moyenne": 10.52
+ },
+ {
+   "Name": "74 -  HAROUZ  DINA",
+   "Sid": 10.75,
+   "Sad": 11.4,
+   "GL": 13.6,
+   "ihm": 13.7,
+   "admi": 9.75,
+   "progWeb": 8.2,
+   "ENVS": 13,
+   "Moyenne": 11.56
+ },
+ {
+   "Name": "75 -  HENNI  ZINEB",
+   "Sid": 6.1,
+   "Sad": 9.8,
+   "GL": 13.3,
+   "ihm": 13,
+   "admi": 10.8,
+   "progWeb": 5.6,
+   "ENVS": 14,
+   "Moyenne": 10
+ },
+ {
+   "Name": "76 -  HERAIZ  IMADEDDINE",
+   "Sid": 7.25,
+   "Sad": 5.9,
+   "GL": 9.2,
+   "ihm": 11.2,
+   "admi": 5.6,
+   "progWeb": 7.1,
+   "ENVS": 12,
+   "Moyenne": 8.08
+ },
+ {
+   "Name": "77 -  HERZI  AYA",
+   "Sid": 6.55,
+   "Sad": 7.6,
+   "GL": 9.3,
+   "ihm": 5.1,
+   "admi": 6.4,
+   "progWeb": 5.6,
+   "ENVS": 13,
+   "Moyenne": 7.4
+ },
+ {
+   "Name": "78 -  KABOUYA  ELMAHDI",
+   "Sid": 14.4,
+   "Sad": 7.3,
+   "GL": 12.05,
+   "ihm": 10.3,
+   "admi": 7.3,
+   "progWeb": 7.2,
+   "ENVS": 13,
+   "Moyenne": 10.76
+ },
+ {
+   "Name": "79 -  KARA  IKRAM RIHEM",
+   "Sid": 11.3,
+   "Sad": 8.1,
+   "GL": 13,
+   "ihm": 14.15,
+   "admi": 11.1,
+   "progWeb": 8.5,
+   "ENVS": 18,
+   "Moyenne": 11.7
+ },
+ {
+   "Name": "80 -  KASMI  HADIL",
+   "Sid": 10,
+   "Sad": 11.5,
+   "GL": 13.5,
+   "ihm": 12.4,
+   "admi": 11.5,
+   "progWeb": 6.2,
+   "ENVS": 13,
+   "Moyenne": 11.19
+ },
+ {
+   "Name": "81 -  KOUIDRI  Hadjir",
+   "Sid": 5.2,
+   "Sad": 10,
+   "GL": 14.22,
+   "ihm": 9.9,
+   "admi": 5.7,
+   "progWeb": 5,
+   "ENVS": 11,
+   "Moyenne": 8.82
+ },
+ {
+   "Name": "82 -  LACEFAR  SABA",
+   "Sid": 11.4,
+   "Sad": 6.5,
+   "GL": 10.9,
+   "ihm": 11,
+   "admi": 8.55,
+   "progWeb": 5.7,
+   "ENVS": 13,
+   "Moyenne": 9.75
+ },
+ {
+   "Name": "83 -  LADJAL  SAFIA",
+   "Sid": 10.8,
+   "Sad": 9.7,
+   "GL": 14.75,
+   "ihm": 14.6,
+   "admi": 9.7,
+   "progWeb": 9.4,
+   "ENVS": 15,
+   "Moyenne": 12
+ },
+ {
+   "Name": "84 -  LAOUEDJ  IBRAHIM\nELKHALIL",
+   "Sid": 10.4,
+   "Sad": 11.5,
+   "GL": 13.2,
+   "ihm": 13.3,
+   "admi": 9.5,
+   "progWeb": 5.2,
+   "ENVS": 12,
+   "Moyenne": 10.91
+ },
+ {
+   "Name": "85 -  LASSELAT  SOUNDOUS",
+   "Sid": 6.75,
+   "Sad": 8.8,
+   "GL": 14.15,
+   "ihm": 10.6,
+   "admi": 11.45,
+   "progWeb": 9.4,
+   "ENVS": 10,
+   "Moyenne": 10.24
+ },
+ {
+   "Name": "86 -  LEGHOUIL  DOUHA",
+   "Sid": 4.95,
+   "Sad": 5.7,
+   "GL": 9.4,
+   "ihm": 11.5,
+   "admi": 7.6,
+   "progWeb": 6.9,
+   "ENVS": 11,
+   "Moyenne": 7.75
+ },
+ {
+   "Name": "87 -  LOGRADA  BACHRA",
+   "Sid": 8.7,
+   "Sad": 7.7,
+   "GL": 13.5,
+   "ihm": 13,
+   "admi": 7.7,
+   "progWeb": 7.1,
+   "ENVS": 11,
+   "Moyenne": 10.05
+ },
+ {
+   "Name": "88 -  LOUKRIZ  ABDERRAOUF",
+   "Sid": 14.6,
+   "Sad": 7.4,
+   "GL": 13,
+   "ihm": 15.3,
+   "admi": 12.1,
+   "progWeb": 10.5,
+   "ENVS": 11,
+   "Moyenne": 12.47
+ },
+ {
+   "Name": "89 -  MAAMRI  LEILA",
+   "Sid": 11.7,
+   "Sad": 10.5,
+   "GL": 14.2,
+   "ihm": 14.6,
+   "admi": 16.5,
+   "progWeb": 9.4,
+   "ENVS": 16,
+   "Moyenne": 13.03
+ },
+ {
+   "Name": "90 -  MAHAMDI  ABIR",
+   "Sid": 7.1,
+   "Sad": 2.3,
+   "GL": 10.7,
+   "ihm": 11.7,
+   "admi": 2.6,
+   "progWeb": 6.7,
+   "ENVS": 11,
+   "Moyenne": 7.58
+ },
+ {
+   "Name": "91 -  MAHROUG  FAHD\nMOHAMMED",
+   "Sid": 12.25,
+   "Sad": 8.4,
+   "GL": 13,
+   "ihm": 16.35,
+   "admi": 9.2,
+   "progWeb": 7.7,
+   "ENVS": 17,
+   "Moyenne": 11.84
+ },
+ {
+   "Name": "92 -  MAROUF  YOUNES",
+   "Sid": 6.6,
+   "Sad": 9,
+   "GL": 12,
+   "ihm": 12.1,
+   "admi": 9.8,
+   "progWeb": 8.1,
+   "ENVS": 10,
+   "Moyenne": 9.55
+ },
+ {
+   "Name": "93 -  MEBARKI  RADOUANE",
+   "Sid": 5.15,
+   "Sad": 6.4,
+   "GL": 11.25,
+   "ihm": 9.9,
+   "admi": 7.8,
+   "progWeb": 6.6,
+   "ENVS": 12,
+   "Moyenne": 8.18
+ },
+ {
+   "Name": "94 -  MEKKI  AMIRA",
+   "Sid": 7.5,
+   "Sad": 9.9,
+   "GL": 11.85,
+   "ihm": 14,
+   "admi": 8.9,
+   "progWeb": 8,
+   "ENVS": 15,
+   "Moyenne": 10.24
+ },
+ {
+   "Name": "95 -  MELIANI  DALAL",
+   "Sid": 12.05,
+   "Sad": 8.5,
+   "GL": 13.9,
+   "ihm": 14.9,
+   "admi": 8.85,
+   "progWeb": 8.8,
+   "ENVS": 10,
+   "Moyenne": 11.52
+ },
+ {
+   "Name": "96 -  MELIANI  TAHA EL AMIN",
+   "Sid": 14.35,
+   "Sad": 4.9,
+   "GL": 11.7,
+   "ihm": 12.25,
+   "admi": 11.15,
+   "progWeb": 7,
+   "ENVS": 16,
+   "Moyenne": 11.22
+ },
+ {
+   "Name": "97 -  MERADA  AZAD",
+   "Sid": 8.9,
+   "Sad": 6.3,
+   "GL": 12.4,
+   "ihm": 12.85,
+   "admi": 9.5,
+   "progWeb": 6.6,
+   "ENVS": 14,
+   "Moyenne": 9.98
+ },
+ {
+   "Name": "98 -  MIAADI  SALOUA",
+   "Sid": 14.25,
+   "Sad": 8.2,
+   "GL": 15.3,
+   "ihm": 15.95,
+   "admi": 13.2,
+   "progWeb": 8,
+   "ENVS": 20,
+   "Moyenne": 13.46
+ },
+ {
+   "Name": "99 -  MIZI  AMIRA",
+   "Sid": 10.05,
+   "Sad": 7.7,
+   "GL": 13.65,
+   "ihm": 11.4,
+   "admi": 10.1,
+   "progWeb": 7.8,
+   "ENVS": 10,
+   "Moyenne": 10.52
+ },
+ {
+   "Name": "100 -  MOUSSA  KAWTHER",
+   "Sid": 9.55,
+   "Sad": 9,
+   "GL": 12.75,
+   "ihm": 13.2,
+   "admi": 12.8,
+   "progWeb": 6.4,
+   "ENVS": 13,
+   "Moyenne": 10.88
+ },
+ {
+   "Name": "101 -  NECIR  MERIEM",
+   "Sid": 9.45,
+   "Sad": 7.9,
+   "GL": 15.2,
+   "ihm": 15.1,
+   "admi": 11.3,
+   "progWeb": 7.2,
+   "ENVS": 15,
+   "Moyenne": 11.56
+ },
+ {
+   "Name": "102 -  NIA  IMANE",
+   "Sid": 11.65,
+   "Sad": 7.5,
+   "GL": 14.4,
+   "ihm": 12.4,
+   "admi": 8.5,
+   "progWeb": 5.7,
+   "ENVS": 14,
+   "Moyenne": 10.96
+ },
+ {
+   "Name": "103 -  OMRI  ABDERRAHMEN",
+   "Sid": 6.8,
+   "Sad": 9.4,
+   "GL": 10.7,
+   "ihm": 13.4,
+   "admi": 6.55,
+   "progWeb": 8.5,
+   "ENVS": 15,
+   "Moyenne": 9.46
+ },
+ {
+   "Name": "104 -  OUGHNIA  MANAR",
+   "Sid": 12.9,
+   "Sad": 14.5,
+   "GL": 13.8,
+   "ihm": 15.2,
+   "admi": 12.1,
+   "progWeb": 6.3,
+   "ENVS": 13,
+   "Moyenne": 12.71
+ },
+ {
+   "Name": "105 -  RAHMANI  NABIL",
+   "Sid": 10.2,
+   "Sad": 8.3,
+   "GL": 11.1,
+   "ihm": 10.15,
+   "admi": 7.3,
+   "progWeb": 6.8,
+   "ENVS": 10,
+   "Moyenne": 9.43
+ },
+ {
+   "Name": "106 -  SAADI  CHEKER ALLAH",
+   "Sid": 8.2,
+   "Sad": 10.8,
+   "GL": 12.9,
+   "ihm": 11.8,
+   "admi": 9.8,
+   "progWeb": 6.5,
+   "ENVS": 20,
+   "Moyenne": 10.72
+ },
+ {
+   "Name": "107 -  SAHRAOUI  NASREDDINE",
+   "Sid": 11,
+   "Sad": 10.7,
+   "GL": 14.55,
+   "ihm": 11.6,
+   "admi": 10.55,
+   "progWeb": 8.1,
+   "ENVS": 16,
+   "Moyenne": 11.77
+ },
+ {
+   "Name": "108 -  SAIDI  ZOUBEYDA",
+   "Sid": 8.6,
+   "Sad": 7.7,
+   "GL": 13.1,
+   "ihm": 10.9,
+   "admi": 10,
+   "progWeb": 7,
+   "ENVS": 10,
+   "Moyenne": 9.88
+ },
+ {
+   "Name": "109 -  SAOUDI  KHAWLA",
+   "Sid": 8.7,
+   "Sad": 9.2,
+   "GL": 11.5,
+   "ihm": 10.4,
+   "admi": 8.45,
+   "progWeb": 7.8,
+   "ENVS": 15,
+   "Moyenne": 9.85
+ },
+ {
+   "Name": "110 -  SAOUDI  THEBAT",
+   "Sid": 10.45,
+   "Sad": 9.3,
+   "GL": 13.6,
+   "ihm": 12.2,
+   "admi": 10.4,
+   "progWeb": 7.1,
+   "ENVS": 10,
+   "Moyenne": 10.84
+ },
+ {
+   "Name": "111 -  SAYHI  ZINEB",
+   "Sid": 7.6,
+   "Sad": 9.9,
+   "GL": 11.85,
+   "ihm": 11.8,
+   "admi": 11.5,
+   "progWeb": 7.4,
+   "ENVS": 12,
+   "Moyenne": 10.06
+ },
+ {
+   "Name": "112 -  SEGHIOUR  LINA MARIYA",
+   "Sid": 14.95,
+   "Sad": 11.4,
+   "GL": 12.85,
+   "ihm": 14.3,
+   "admi": 13.9,
+   "progWeb": 8.8,
+   "ENVS": 17,
+   "Moyenne": 13.24
+ },
+ {
+   "Name": "113 -  SENINA  SOUHA",
+   "Sid": 12.85,
+   "Sad": 14.8,
+   "GL": 14.45,
+   "ihm": 13.4,
+   "admi": 10.55,
+   "progWeb": 6.7,
+   "ENVS": 11,
+   "Moyenne": 12.42
+ },
+ {
+   "Name": "114 -  TALBI  IKRAM",
+   "Sid": 9.85,
+   "Sad": 9.2,
+   "GL": 14.1,
+   "ihm": 11.7,
+   "admi": 9.65,
+   "progWeb": 6.1,
+   "ENVS": 10,
+   "Moyenne": 10.54
+ },
+ {
+   "Name": "115 -  THAMRI  MAYADA",
+   "Sid": 9.3,
+   "Sad": 10.7,
+   "GL": 12.5,
+   "ihm": 14.1,
+   "admi": 13.7,
+   "progWeb": 9.1,
+   "ENVS": 16,
+   "Moyenne": 11.67
+ },
+ {
+   "Name": "116 -  THARAFI  SOHAIB",
+   "Sid": 11.25,
+   "Sad": 10.1,
+   "GL": 12.5,
+   "ihm": 14.4,
+   "admi": 9.3,
+   "progWeb": 7.5,
+   "ENVS": 13,
+   "Moyenne": 11.21
+ },
+ {
+   "Name": "117 -  TURQUI  AKRAM",
+   "Sid": 4.6,
+   "Sad": 8.6,
+   "GL": 12.05,
+   "ihm": 12.1,
+   "admi": 7.7,
+   "progWeb": 6.9,
+   "ENVS": 12,
+   "Moyenne": 8.78
+ },
+ {
+   "Name": "118 -  YALLAOUI  SALAH EDDINE",
+   "Sid": 12.65,
+   "Sad": 8.1,
+   "GL": 13.8,
+   "ihm": 11.1,
+   "admi": 9.95,
+   "progWeb": 6.8,
+   "ENVS": 10,
+   "Moyenne": 11.04
+ },
+ {
+   "Name": "119 -  ZANAT  CHAHINEZ",
+   "Sid": 10.8,
+   "Sad": 8.7,
+   "GL": 12.35,
+   "ihm": 11.6,
+   "admi": 11.7,
+   "progWeb": 7,
+   "ENVS": 13,
+   "Moyenne": 10.8
+ },
+ {
+   "Name": "120 -  ZELLAGUI  SAFWAN",
+   "Sid": 16.7,
+   "Sad": 11.3,
+   "GL": 15.55,
+   "ihm": 13.3,
+   "admi": 11.5,
+   "progWeb": 5,
+   "ENVS": 14,
+   "Moyenne": 13.25
+ },
+ {
+   "Name": "121 -  ZIANI  RYM",
+   "Sid": 15.4,
+   "Sad": 8.9,
+   "GL": 13.1,
+   "ihm": 15.8,
+   "admi": 10.1,
+   "progWeb": 8,
+   "ENVS": 15,
+   "Moyenne": 12.62
+ },
+ {
+   "Name": "122 -  ZIDELKHIL  HANA",
+   "Sid": 9.55,
+   "Sad": 9.6,
+   "GL": 13.35,
+   "ihm": 12.3,
+   "admi": 11.05,
+   "progWeb": 9,
+   "ENVS": 10,
+   "Moyenne": 10.91
+ },
+ {
+   "Name": "123 -  ZIDELKHIL  YOUSRA",
+   "Sid": 12.3,
+   "Sad": 9.6,
+   "GL": 13.2,
+   "ihm": 12.8,
+   "admi": 13.35,
+   "progWeb": 9.3,
+   "ENVS": 12,
+   "Moyenne": 12.01
+ },
+ {
+   "Name": "124 -  ZIKEM  RIDHA",
+   "Sid": 8.15,
+   "Sad": 10.1,
+   "GL": 11.7,
+   "ihm": 8.7,
+   "admi": 6.2,
+   "progWeb": 6.8,
+   "ENVS": 10,
+   "Moyenne": 9
+ },
+ {
+   "Name": "125 -  ZIOUCHE  BOUTHAINA",
+   "Sid": 8.15,
+   "Sad": 9.7,
+   "GL": 12,
+   "ihm": 9.65,
+   "admi": 6.6,
+   "progWeb": 8.8,
+   "ENVS": 14,
+   "Moyenne": 9.66
+ },
+ {
+   "Name": "126 -  ZOUBIRI  CHAHINEZ",
+   "Sid": 13.1,
+   "Sad": 7.9,
+   "GL": 12.85,
+   "ihm": 12.35,
+   "admi": 11.8,
+   "progWeb": 8.8,
+   "ENVS": 15,
+   "Moyenne": 11.79
+ }
+
+
+    ];
+  
+   
+    let currentSort = null;
+    let originalData = [...NameData];
+    let filteredData = [...NameData];
+    const headers = Object.keys(NameData[0]);
+    
+function createModuleSummary(data, includeAvg = true) {
+  const summaryContainer = document.createElement('div');
+  summaryContainer.className = 'summary-container';
+  
+  const title = document.createElement('div');
+  title.className = 'summary-title';
+  title.textContent = 'Étudiants avec moyenne >= 10 par Module';
+  summaryContainer.appendChild(title);
+  
+  const grid = document.createElement('div');
+  grid.className = 'summary-grid';
+  
+  // Get all module names (exclude Name and AVG columns)
+  const modules = headers.filter(h => h !== 'Name' && !h.includes('AVG'));
+  
+  modules.forEach(module => {
+    const count = data.filter(Name => Name[module] >= 10).length;
+    
+    const item = document.createElement('div');
+    item.className = 'summary-item';
+    
+    const moduleName = document.createElement('div');
+    moduleName.className = 'summary-module';
+    moduleName.textContent = module;
+    
+    const moduleCount = document.createElement('div');
+    moduleCount.className = 'summary-count';
+    moduleCount.textContent = `${count} Names`;
+    
+    item.appendChild(moduleName);
+    item.appendChild(moduleCount);
+    grid.appendChild(item);
+  });
+  
+  // Conditionally add AVG count
+  if (includeAvg) {
+    const avgColumn = headers.find(h => h.includes('AVG'));
+    if (avgColumn) {
+      const avgItem = document.createElement('div');
+      avgItem.className = 'summary-item';
+      
+      const avgName = document.createElement('div');
+      avgName.className = 'summary-module';
+      avgName.textContent = avgColumn;
+      
+      const avgCount = document.createElement('div');
+      avgCount.className = 'summary-count';
+      avgCount.textContent = `${data.filter(Name => Name[avgColumn] >= 10).length} Names`;
+      
+      avgItem.appendChild(avgName);
+      avgItem.appendChild(avgCount);
+      grid.appendChild(avgItem);
+    }
+  }
+  
+  summaryContainer.appendChild(grid);
+  return summaryContainer;
+}
+
+    function createButtons() {
+      const controls = document.getElementById("controls");
+      headers.slice(1).forEach(header => {
+        const btn = document.createElement("button");
+        btn.textContent = header;
+        btn.dataset.sorted = "false";
+        btn.onclick = () => toggleSort(header, btn);
+        if (header === "AVG") btn.classList.add("avg-button");
+        controls.appendChild(btn);
+      });
+    }
+
+    function toggleSort(column, btn) {
+      if (currentSort === column && btn.dataset.sorted === "true") {
+        btn.dataset.sorted = "false";
+        currentSort = null;
+        displayTable(filteredData);
+      } else {
+        document.querySelectorAll("button").forEach(b => b.dataset.sorted = "false");
+        btn.dataset.sorted = "true";
+        currentSort = column;
+        const sorted = [...filteredData].sort((a, b) => b[column] - a[column]);
+        displayTable(sorted, column);
+      }
+    }
+
+    function displayTable(data, sortedColumn = null) {
+      const table = document.getElementById("dataTable");
+      const noResultsDiv = document.getElementById("noResults");
+      table.innerHTML = "";
+       const container = document.querySelector('.container');
+  const existingSummary = document.querySelector('.summary-container');
+  if (existingSummary) existingSummary.remove();
+  
+  container.insertBefore(createModuleSummary(data), table);
+
+      if (data.length === 0) {
+        noResultsDiv.style.display = "block";
+        return;
+      } else {
+        noResultsDiv.style.display = "none";
+      }
+
+      // Create table header
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+      headerRow.appendChild(document.createElement("th"));
+      headers.forEach(header => {
+        const th = document.createElement("th");
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+
+      // Calculate averages for Names with AVG > 10
+      const above10Names = data.filter(Name => Name.AVG >= 10);
+      if (above10Names.length > 0) {
+        const above10AvgRow = document.createElement("tr");
+        above10AvgRow.className = "average-above-10-row";
+        const above10Label = document.createElement("td");
+        above10Label.textContent = `AVG of the modules of Name that have avg_s1>10`;
+   
+        above10AvgRow.appendChild(above10Label);
+
+        headers.forEach(header => {
+          const td = document.createElement("td");
+          if (header === "Name") {
+            td.textContent = "";
+          } else {
+            const values = above10Names.map(d => d[header]);
+            const average = (values.reduce((acc, val) => acc + val, 0) / values.length).toFixed(2);
+            td.textContent = average;
+          }
+          above10AvgRow.appendChild(td);
+        });
+        tbody.appendChild(above10AvgRow);
+      }
+
+      // Calculate overall averages
+      const averageRow = document.createElement("tr");
+      averageRow.className = "average-row";
+      const avgLabel = document.createElement("td");
+      avgLabel.textContent = `Total moyen de chaque module`;
+      averageRow.appendChild(avgLabel);
+
+      headers.forEach(header => {
+        const td = document.createElement("td");
+        if (header === "Name") {
+          td.textContent = "";
+        } else {
+          const values = data.map(d => d[header]);
+          const average = (values.reduce((acc, val) => acc + val, 0) / values.length).toFixed(2);
+          td.textContent = average;
+        }
+        averageRow.appendChild(td);
+      });
+      tbody.appendChild(averageRow);
+
+      // Add Name data rows
+      let maxValue = sortedColumn ? Math.max(...data.map(d => d[sortedColumn])) : null;
+
+      data.forEach((row, index) => {
+        const tr = document.createElement("tr");
+        const rankTd = document.createElement("td");
+        rankTd.textContent = sortedColumn ? index + 1 : "-";
+        rankTd.className = sortedColumn ? "sorted-rank" : "";
+        tr.appendChild(rankTd);
+
+        headers.forEach(header => {
+          const td = document.createElement("td");
+          td.textContent = row[header];
+          if (sortedColumn && header === sortedColumn) {
+            td.classList.add("highlight-column");
+            if (row[header] === maxValue) {
+              td.classList.add("highest-score");
+            }
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+    }
+
+    function handleSearch() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      filteredData = originalData.filter(Name => 
+        Name.Name.toLowerCase().includes(input)
+      );
+      displayTable(filteredData);
+    }
+
+    createButtons();
+    displayTable(NameData);
+  </script>
+</body>
+</html>
